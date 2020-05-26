@@ -54,32 +54,34 @@ class _HomePageState extends State<HomePage> {
       body: StreamBuilder(
         initialData: List<AddressModel>(),
         stream: streamConsultAddress.stream,
-        builder: (BuildContext context,
-            AsyncSnapshot<List<AddressModel>> snapshot) {
-          if (!snapshot.hasData) {
-            return Skeleton(10);
-          } else {
-            var address = snapshot.data;
-            return Visibility(
-              visible: address.isNotEmpty,
-              replacement: Center(child: Text('Clique na lupa')),
-              child: ListView.builder(
-                itemCount: address.length,
-                itemBuilder: (_, index) {
-                  var mAddress = address[index];
-                    return ListTile(
-                      leading: Icon(
-                        Icons.location_city,
-                        size: 50,
-                      ),
-                      title: Text(mAddress.logradouro),
-                      subtitle: Text(mAddress.bairro),
-                    );
+        builder:
+            (BuildContext context, AsyncSnapshot<List<AddressModel>> snapshot) {
+          return Visibility(
+            visible: !snapshot.hasData,
+            replacement: list(snapshot.data),
+            child: Skeleton(10),
+          );
+        },
+      ),
+    );
+  }
 
-                },
-              ),
-            );
-          }
+  list(var address) {
+    return Visibility(
+      visible: (address != null &&  address.isNotEmpty),
+      replacement: Center(child: Text('Clique na lupa')),
+      child: ListView.builder(
+        itemCount: address == null ? 0 : address.length,
+        itemBuilder: (_, index) {
+          var mAddress = address[index];
+          return ListTile(
+            leading: Icon(
+              Icons.location_city,
+              size: 50,
+            ),
+            title: Text(mAddress.logradouro),
+            subtitle: Text(mAddress.bairro),
+          );
         },
       ),
     );
